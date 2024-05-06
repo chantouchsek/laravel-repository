@@ -425,7 +425,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
         $this->applyScope();
 
         $temporarySkipPresenter = $this->skipPresenter;
-        $this->skipPresenter(true);
+        $this->skipPresenter();
 
         $model = $this->model->firstOrNew($attributes);
         $this->skipPresenter($temporarySkipPresenter);
@@ -449,7 +449,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
         $this->applyScope();
 
         $temporarySkipPresenter = $this->skipPresenter;
-        $this->skipPresenter(true);
+        $this->skipPresenter();
 
         $model = $this->model->firstOrCreate($attributes);
         $this->skipPresenter($temporarySkipPresenter);
@@ -724,7 +724,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
 
         $temporarySkipPresenter = $this->skipPresenter;
 
-        $this->skipPresenter(true);
+        $this->skipPresenter();
 
         event(new RepositoryEntityCreating($this, $attributes));
 
@@ -746,12 +746,12 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @return int
      * @throws RepositoryException|BindingResolutionException
      */
-    public function delete($id): int
+    public function delete($id): mixed
     {
         $this->applyScope();
 
         $temporarySkipPresenter = $this->skipPresenter;
-        $this->skipPresenter(true);
+        $this->skipPresenter();
 
         $model = $this->find($id);
         $originalModel = clone $model;
@@ -773,10 +773,10 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      *
      * @param array $where
      *
-     * @return int
+     * @return bool|null
      * @throws RepositoryException|BindingResolutionException
      */
-    public function deleteWhere(array $where): int
+    public function deleteWhere(array $where): ?bool
     {
         $this->applyScope();
 

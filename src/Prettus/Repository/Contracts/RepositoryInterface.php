@@ -183,9 +183,9 @@ interface RepositoryInterface
      *
      * @param $id
      *
-     * @return int
+     * @return mixed
      */
-    public function delete($id): int;
+    public function delete($id): mixed;
 
     /**
      * Order a collection by a given column
