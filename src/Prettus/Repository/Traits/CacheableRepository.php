@@ -6,7 +6,7 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Helpers\CacheKeys;
 use ReflectionObject;
-use Exception;
+use Throwable;
 
 /**
  * Class CacheableRepository
@@ -15,11 +15,7 @@ use Exception;
  */
 trait CacheableRepository
 {
-
-    /**
-     * @var CacheRepository
-     */
-    protected $cacheRepository = null;
+    protected ?CacheRepository $cacheRepository = null;
 
     /**
      * Set Cache Repository
@@ -28,7 +24,7 @@ trait CacheableRepository
      *
      * @return $this
      */
-    public function setCacheRepository(CacheRepository $repository)
+    public function setCacheRepository(CacheRepository $repository): static
     {
         $this->cacheRepository = $repository;
 
@@ -40,7 +36,7 @@ trait CacheableRepository
      *
      * @return CacheRepository
      */
-    public function getCacheRepository()
+    public function getCacheRepository(): CacheRepository
     {
         if (is_null($this->cacheRepository)) {
             $this->cacheRepository = app(config('repository.cache.repository', 'cache'));
@@ -56,7 +52,7 @@ trait CacheableRepository
      *
      * @return $this
      */
-    public function skipCache($status = true)
+    public function skipCache(bool $status = true): static
     {
         $this->cacheSkip = $status;
 
@@ -66,9 +62,9 @@ trait CacheableRepository
     /**
      * @return bool
      */
-    public function isSkippedCache()
+    public function isSkippedCache(): bool
     {
-        $skipped = isset($this->cacheSkip) ? $this->cacheSkip : false;
+        $skipped = $this->cacheSkip ?? false;
         $request = app('Illuminate\Http\Request');
         $skipCacheParam = config('repository.cache.params.skipCache', 'skipCache');
 
@@ -84,7 +80,7 @@ trait CacheableRepository
      *
      * @return bool
      */
-    protected function allowedCache($method)
+    protected function allowedCache($method): bool
     {
         $cacheEnabled = config('repository.cache.enabled', true);
 
@@ -92,8 +88,8 @@ trait CacheableRepository
             return false;
         }
 
-        $cacheOnly = isset($this->cacheOnly) ? $this->cacheOnly : config('repository.cache.allowed.only', null);
-        $cacheExcept = isset($this->cacheExcept) ? $this->cacheExcept : config('repository.cache.allowed.except', null);
+        $cacheOnly = $this->cacheOnly ?? config('repository.cache.allowed.only', null);
+        $cacheExcept = $this->cacheExcept ?? config('repository.cache.allowed.except', null);
 
         if (is_array($cacheOnly)) {
             return in_array($method, $cacheOnly);
@@ -111,14 +107,15 @@ trait CacheableRepository
     }
 
     /**
-     * Get Cache key for the method
+     * Get a Cache key for the method
      *
      * @param $method
      * @param $args
      *
      * @return string
+     * @throws Throwable
      */
-    public function getCacheKey($method, $args = null)
+    public function getCacheKey($method, $args = null): string
     {
 
         $request = app('Illuminate\Http\Request');
@@ -136,12 +133,13 @@ trait CacheableRepository
      * Serialize the criteria making sure the Closures are taken care of.
      *
      * @return string
+     * @throws Throwable
      */
-    protected function serializeCriteria()
+    protected function serializeCriteria(): string
     {
         try {
             return serialize($this->getCriteria());
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return serialize($this->getCriteria()->map(function ($criterion) {
                 return $this->serializeCriterion($criterion);
             }));
@@ -149,22 +147,22 @@ trait CacheableRepository
     }
 
     /**
-     * Serialize single criterion with customized serialization of Closures.
+     * Serialize a single criterion with customized serialization of Closures.
      *
-     * @param  \Prettus\Repository\Contracts\CriteriaInterface $criterion
-     * @return \Prettus\Repository\Contracts\CriteriaInterface|array
+     * @param CriteriaInterface $criterion
+     * @return CriteriaInterface|array
      *
-     * @throws \Exception
+     * @throws Throwable
      */
-    protected function serializeCriterion($criterion)
+    protected function serializeCriterion(CriteriaInterface $criterion): array|CriteriaInterface
     {
         try {
             serialize($criterion);
 
             return $criterion;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             // We want to take care of the closure serialization errors,
-            // other than that we will simply re-throw the exception.
+            // other than that, we will simply re-throw the exception.
             if ($e->getMessage() !== "Serialization of 'Closure' is not allowed") {
                 throw $e;
             }
@@ -177,26 +175,11 @@ trait CacheableRepository
         }
     }
 
-    /**
-     * Get cache time
-     * 
-     * Return minutes: version < 5.8
-     * Return seconds: version >= 5.8
-     *
-     * @return int
-     */
-    public function getCacheTime()
+    public function getCacheTime(): float|int
     {
-        $cacheMinutes = isset($this->cacheMinutes) ? $this->cacheMinutes : config('repository.cache.minutes', 30);
+        $cacheMinutes = $this->cacheMinutes ?? config('repository.cache.minutes', 30);
 
-        /**
-         * https://laravel.com/docs/5.8/upgrade#cache-ttl-in-seconds
-         */
-        if ($this->versionCompare($this->app->version(), "5.7.*", ">")) {
-            return $cacheMinutes * 60;
-        }
-
-        return $cacheMinutes;
+        return $cacheMinutes * 60;
     }
 
     /**
@@ -205,8 +188,9 @@ trait CacheableRepository
      * @param array $columns
      *
      * @return mixed
+     * @throws Throwable
      */
-    public function all($columns = ['*'])
+    public function all(array $columns = ['*']): mixed
     {
         if (!$this->allowedCache('all') || $this->isSkippedCache()) {
             return parent::all($columns);
@@ -226,13 +210,14 @@ trait CacheableRepository
     /**
      * Retrieve all data of repository, paginated
      *
-     * @param null  $limit
+     * @param null $limit
      * @param array $columns
      * @param string $method
      *
      * @return mixed
+     * @throws Throwable
      */
-    public function paginate($limit = null, $columns = ['*'], $method = 'paginate')
+    public function paginate($limit = null, array $columns = ['*'], string $method = 'paginate'): mixed
     {
         if (!$this->allowedCache('paginate') || $this->isSkippedCache()) {
             return parent::paginate($limit, $columns, $method);
@@ -257,8 +242,9 @@ trait CacheableRepository
      * @param array $columns
      *
      * @return mixed
+     * @throws Throwable
      */
-    public function find($id, $columns = ['*'])
+    public function find($id, array $columns = ['*']): mixed
     {
         if (!$this->allowedCache('find') || $this->isSkippedCache()) {
             return parent::find($id, $columns);
@@ -283,8 +269,9 @@ trait CacheableRepository
      * @param array $columns
      *
      * @return mixed
+     * @throws Throwable
      */
-    public function findByField($field, $value = null, $columns = ['*'])
+    public function findByField($field, $value = null, array $columns = ['*']): mixed
     {
         if (!$this->allowedCache('findByField') || $this->isSkippedCache()) {
             return parent::findByField($field, $value, $columns);
@@ -308,8 +295,9 @@ trait CacheableRepository
      * @param array $columns
      *
      * @return mixed
+     * @throws Throwable
      */
-    public function findWhere(array $where, $columns = ['*'])
+    public function findWhere(array $where, array $columns = ['*']): mixed
     {
         if (!$this->allowedCache('findWhere') || $this->isSkippedCache()) {
             return parent::findWhere($where, $columns);
@@ -332,8 +320,9 @@ trait CacheableRepository
      * @param CriteriaInterface $criteria
      *
      * @return mixed
+     * @throws Throwable
      */
-    public function getByCriteria(CriteriaInterface $criteria)
+    public function getByCriteria(CriteriaInterface $criteria): mixed
     {
         if (!$this->allowedCache('getByCriteria') || $this->isSkippedCache()) {
             return parent::getByCriteria($criteria);
