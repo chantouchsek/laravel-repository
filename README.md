@@ -2,7 +2,7 @@
 
 Laravel 10|11 Repositories is used to abstract the data layer, making our application more flexible to maintain.
 
-[![Latest Stable Version](https://poser.pugx.org/chantouch/laravel-repository/v/stable)](https://packagist.org/packages/chantouch/laravel-repository) [![Total Downloads](https://poser.pugx.org/chantouch/laravel-repository/downloads)](https://packagist.org/packages/chantouch/laravel-repository) [![Latest Unstable Version](https://poser.pugx.org/chantouch/laravel-repository/v/unstable)](https://packagist.org/packages/chantouch/laravel-repository) [![License](https://poser.pugx.org/chantouch/laravel-repository/license)](https://packagist.org/packages/chantouch/laravel-repository)
+[![Latest Stable Version](https://poser.pugx.org/chantouchsek/laravel-repository/v/stable)](https://packagist.org/packages/chantouchsek/laravel-repository) [![Total Downloads](https://poser.pugx.org/chantouchsek/laravel-repository/downloads)](https://packagist.org/packages/chantouchsek/laravel-repository) [![Latest Unstable Version](https://poser.pugx.org/chantouchsek/laravel-repository/v/unstable)](https://packagist.org/packages/chantouchsek/laravel-repository) [![License](https://poser.pugx.org/chantouchsek/laravel-repository/license)](https://packagist.org/packages/chantouchsek/laravel-repository)
 [![Code Climate](https://codeclimate.com/github/andersao/l5-repository/badges/gpa.svg)](https://codeclimate.com/github/andersao/l5-repository)
 
 You want to know a little more about the Repository pattern? [Read this great article](http://bit.ly/1IdmRNS).
@@ -47,7 +47,7 @@ You want to know a little more about the Repository pattern? [Read this great ar
 Execute the following command to get the latest version of the package:
 
 ```terminal
-composer require chantouch/laravel-repository
+composer require chantouchsek/laravel-repository
 ```
 
 ### Laravel
