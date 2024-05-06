@@ -22,7 +22,6 @@ use Prettus\Repository\Events\RepositoryEntityDeleting;
 use Prettus\Repository\Events\RepositoryEntityUpdated;
 use Prettus\Repository\Events\RepositoryEntityUpdating;
 use Prettus\Repository\Exceptions\RepositoryException;
-use Prettus\Repository\Traits\ComparesVersionsTrait;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -34,8 +33,6 @@ use Prettus\Validator\Exceptions\ValidatorException;
  */
 abstract class BaseRepository implements RepositoryInterface, RepositoryCriteriaInterface
 {
-    use ComparesVersionsTrait;
-
     /**
      * @var Application
      */
@@ -122,9 +119,9 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
     }
 
     /**
-     * @throws RepositoryException
+     * @throws RepositoryException|BindingResolutionException
      */
-    public function resetModel()
+    public function resetModel(): void
     {
         $this->makeModel();
     }
@@ -134,7 +131,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      *
      * @return string
      */
-    abstract public function model();
+    abstract public function model(): string;
 
     /**
      * Specify Presenter class name
@@ -149,10 +146,10 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
     /**
      * Specify Validator class name of Prettus\Validator\Contracts\ValidatorInterface
      *
-     * @return null
+     * @return string|null
      * @throws Exception
      */
-    public function validator(): null
+    public function validator(): ?string
     {
         if (is_array($this->rules) && !empty($this->rules)) {
             if (class_exists('Prettus\Validator\LaravelValidator')) {
@@ -482,13 +479,13 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
     /**
      * Retrieve all data of repository, paginated
      *
-     * @param null|int $limit
+     * @param null $limit
      * @param array $columns
-     *
+     * @param string $method
      * @return mixed
      * @throws RepositoryException
      */
-    public function paginate($limit = null, array $columns = ['*']): mixed
+    public function paginate($limit = null, array $columns = ['*'], string $method = "paginate"): mixed
     {
         $this->applyCriteria();
         $this->applyScope();
@@ -603,7 +600,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param array $columns
      *
      * @return mixed
-     * @throws RepositoryException
+     * @throws RepositoryException|BindingResolutionException
      */
     public function findWhereNotIn($field, array $values, array $columns = ['*']): mixed
     {
@@ -623,7 +620,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param array $columns
      *
      * @return mixed
-     * @throws RepositoryException
+     * @throws RepositoryException|BindingResolutionException
      */
     public function findWhereBetween($field, array $values, array $columns = ['*']): mixed
     {
@@ -641,7 +638,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param array $attributes
      *
      * @return mixed
-     * @throws ValidatorException|RepositoryException
+     * @throws ValidatorException|RepositoryException|BindingResolutionException
      *
      */
     public function create(array $attributes): mixed
@@ -669,7 +666,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param       $id
      *
      * @return mixed
-     * @throws ValidatorException|RepositoryException
+     * @throws ValidatorException|RepositoryException|BindingResolutionException
      *
      */
     public function update(array $attributes, $id): mixed
@@ -678,7 +675,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
 
         if (!is_null($this->validator)) {
             // we should pass data that has been casts by the model
-            // to make sure a data type is same because validator may need to use
+            // to make sure a data type is the same because validator may need to use
             // this data to compare with data that fetch from database.
             $model = $this->model->newInstance();
             $model->setRawAttributes([]);
@@ -714,7 +711,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param array $values
      *
      * @return mixed
-     * @throws ValidatorException|RepositoryException
+     * @throws ValidatorException|RepositoryException|BindingResolutionException
      *
      */
     public function updateOrCreate(array $attributes, array $values = []): mixed
@@ -747,7 +744,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param $id
      *
      * @return int
-     * @throws RepositoryException
+     * @throws RepositoryException|BindingResolutionException
      */
     public function delete($id): int
     {
@@ -777,14 +774,14 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param array $where
      *
      * @return int
-     * @throws RepositoryException
+     * @throws RepositoryException|BindingResolutionException
      */
     public function deleteWhere(array $where): int
     {
         $this->applyScope();
 
         $temporarySkipPresenter = $this->skipPresenter;
-        $this->skipPresenter(true);
+        $this->skipPresenter();
 
         $this->applyConditions($where);
 
@@ -975,7 +972,7 @@ abstract class BaseRepository implements RepositoryInterface, RepositoryCriteria
      * @param CriteriaInterface $criteria
      *
      * @return mixed
-     * @throws RepositoryException
+     * @throws RepositoryException|BindingResolutionException
      */
     public function getByCriteria(CriteriaInterface $criteria): mixed
     {
