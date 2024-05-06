@@ -275,11 +275,11 @@ class RequestCriteria implements CriteriaInterface
     }
 
     /**
-     * @param $search
+     * @param string $search
      *
-     * @return null
+     * @return string|null
      */
-    protected function parserSearchValue($search): null
+    protected function parserSearchValue(string $search): ?string
     {
 
         if (stripos($search, ';') || stripos($search, ':')) {
