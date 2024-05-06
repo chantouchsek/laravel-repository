@@ -11,5 +11,5 @@ interface Transformable
     /**
      * @return array
      */
-    public function transform();
+    public function transform(): array;
 }

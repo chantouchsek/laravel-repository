@@ -15,5 +15,5 @@ interface PresenterInterface
      *
      * @return mixed
      */
-    public function present($data);
+    public function present($data): mixed;
 }

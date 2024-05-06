@@ -3,7 +3,6 @@ namespace Prettus\Repository\Generators\Commands;
 
 use File;
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Prettus\Repository\Generators\BindingsGenerator;
 use Prettus\Repository\Generators\FileAlreadyExistsException;
 use Symfony\Component\Console\Input\InputArgument;

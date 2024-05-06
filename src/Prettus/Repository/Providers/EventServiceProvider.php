@@ -16,7 +16,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $listen = [
+    protected array $listen = [
         'Prettus\Repository\Events\RepositoryEntityCreated' => [
             'Prettus\Repository\Listeners\CleanCacheRepository'
         ],
@@ -33,7 +33,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $events = app('events');
 
@@ -57,7 +57,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function listens()
+    public function listens(): array
     {
         return $this->listen;
     }

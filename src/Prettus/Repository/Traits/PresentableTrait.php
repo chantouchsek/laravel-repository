@@ -19,11 +19,11 @@ trait PresentableTrait
     protected $presenter = null;
 
     /**
-     * @param \Prettus\Repository\Contracts\PresenterInterface $presenter
+     * @param PresenterInterface $presenter
      *
      * @return $this
      */
-    public function setPresenter(PresenterInterface $presenter)
+    public function setPresenter(PresenterInterface $presenter): static
     {
         $this->presenter = $presenter;
 
@@ -36,7 +36,7 @@ trait PresentableTrait
      *
      * @return mixed|null
      */
-    public function present($key, $default = null)
+    public function present($key, $default = null): mixed
     {
         if ($this->hasPresenter()) {
             $data = $this->presenter()['data'];
@@ -50,15 +50,15 @@ trait PresentableTrait
     /**
      * @return bool
      */
-    protected function hasPresenter()
+    protected function hasPresenter(): bool
     {
         return isset($this->presenter) && $this->presenter instanceof PresenterInterface;
     }
 
     /**
-     * @return $this|mixed
+     * @return $this|null
      */
-    public function presenter()
+    public function presenter(): null|static
     {
         if ($this->hasPresenter()) {
             return $this->presenter->present($this);

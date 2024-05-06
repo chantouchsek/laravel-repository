@@ -23,7 +23,7 @@ class RepositoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->publishes([
             __DIR__ . '/../../../resources/config/repository.php' => config_path('repository.php')
@@ -40,7 +40,7 @@ class RepositoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->commands('Prettus\Repository\Generators\Commands\RepositoryCommand');
         $this->commands('Prettus\Repository\Generators\Commands\TransformerCommand');
@@ -59,7 +59,7 @@ class RepositoryServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return [];
     }

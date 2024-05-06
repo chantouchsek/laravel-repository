@@ -2,7 +2,6 @@
 namespace Prettus\Repository\Generators\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
 use Prettus\Repository\Generators\ControllerGenerator;
 use Prettus\Repository\Generators\FileAlreadyExistsException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -112,7 +111,7 @@ class ControllerCommand extends Command
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return [
             [

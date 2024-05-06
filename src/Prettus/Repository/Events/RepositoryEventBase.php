@@ -19,16 +19,16 @@ abstract class RepositoryEventBase
     /**
      * @var RepositoryInterface
      */
-    protected $repository;
+    protected RepositoryInterface $repository;
 
     /**
      * @var string
      */
-    protected $action;
+    protected string $action;
 
     /**
      * @param RepositoryInterface $repository
-     * @param Model               $model
+     * @param Model|null $model
      */
     public function __construct(RepositoryInterface $repository, Model $model = null)
     {
@@ -37,9 +37,9 @@ abstract class RepositoryEventBase
     }
 
     /**
-     * @return Model|array
+     * @return Model|null
      */
-    public function getModel()
+    public function getModel(): ?Model
     {
         return $this->model;
     }
@@ -47,7 +47,7 @@ abstract class RepositoryEventBase
     /**
      * @return RepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): RepositoryInterface
     {
         return $this->repository;
     }
@@ -55,7 +55,7 @@ abstract class RepositoryEventBase
     /**
      * @return string
      */
-    public function getAction()
+    public function getAction(): string
     {
         return $this->action;
     }

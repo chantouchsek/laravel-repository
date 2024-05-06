@@ -12,7 +12,7 @@ trait TransformableTrait
     /**
      * @return array
      */
-    public function transform()
+    public function transform(): array
     {
         return $this->toArray();
     }
