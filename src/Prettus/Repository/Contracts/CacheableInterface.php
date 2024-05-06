@@ -39,9 +39,9 @@ interface CacheableInterface
     /**
      * Get cache time
      *
-     * @return int
+     * @return float|int
      */
-    public function getCacheTime(): int;
+    public function getCacheTime(): float|int;
 
 
     /**
