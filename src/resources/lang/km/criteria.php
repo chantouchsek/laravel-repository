@@ -1,4 +1,4 @@
 <?php
 return [
-    'fields_not_accepted' => 'Columns :field are not accepted in the research'
+    'fields_not_accepted' => 'ជួរឈរ :field មិនត្រូវបានទទួលយកក្នុងការស្រាវជ្រាវ។',
 ];
